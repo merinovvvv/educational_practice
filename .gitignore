@@ -99,6 +99,7 @@ cmake-build-debug
 .idea/*
 *.txt
 *.exe
+<<<<<<< HEAD
 
 # Chutzpah Test files
 _Chutzpah*
@@ -346,3 +347,10 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+=======
+*.out
+*.app
+
+*.docx
+*.xlsx
+>>>>>>> 517ed4bf43e4e5bc4cdb0bd8e864e2e2b6a12e54
