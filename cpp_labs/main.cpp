@@ -5,7 +5,7 @@
 
 int main(int argc, char *argv[]) {
 
-//    lab01:
+    //    lab01:
 //    CheckArgumentsAmount(argc);
 //    CheckInputPath(argv[1]);
 //    nlohmann::json object = parseFile(argv[1]);
@@ -18,13 +18,21 @@ int main(int argc, char *argv[]) {
 //        std::cout << "Structure of JSON-file by path " << argv[1] <<  " is incorrect.";
 //    }
 
-//  lab02:
+      //lab02:
+//    CheckArgumentsAmount(argc);
+//    CheckInputPath(argv[1]);
+//    nlohmann::json object = parseFile(argv[1]);
+//
+//    ModifyJsonObject(object);
+//    MakeFile(object);
+
+    //lab03:
     CheckArgumentsAmount(argc);
     CheckInputPath(argv[1]);
-    nlohmann::json object = parseFile(argv[1]);
-
-    ModifyJsonObject(object);
-    MakeFile(object);
+    std::tm date_time = GetRequiredDateTime();
+    nlohmann::json date_time_json = TmToJson(date_time);
+    std::cout << "Current Time in JSON: " << date_time_json.dump(4) << std::endl;
+    writeToFile(argv[1], date_time_json);
 
     return 0;
 }

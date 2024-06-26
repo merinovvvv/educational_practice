@@ -127,3 +127,33 @@ void MakeFile(nlohmann::json& json_object) {
         }
     }
 }
+
+std::tm GetRequiredDateTime() {
+    std::time_t now = std::time(nullptr);
+    std::tm localTime;
+    localtime_s(&localTime, &now);
+    return localTime;
+}
+
+nlohmann::json TmToJson(tm date_time) {
+    return nlohmann::json{
+            {"year", date_time.tm_year + 1900},
+            {"month", date_time.tm_mon + 1},
+            {"day", date_time.tm_mday},
+            {"hour", date_time.tm_hour},
+            {"minute", date_time.tm_min},
+            {"second", date_time.tm_sec}
+    };
+}
+
+void writeToFile(const std::filesystem::path& path_to_filesystem_object, nlohmann::json& json_object) {
+    std::filesystem::path filepath( path_to_filesystem_object.string());
+    std::ofstream jsonData (filepath, std::ios::out);
+
+    if (!jsonData.is_open()) {
+        std::filesystem::create_directories("../lab03_folder/lab03.json");
+    }
+
+    jsonData << json_object.dump(4) << std::endl;
+    jsonData.close();
+}

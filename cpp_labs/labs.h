@@ -3,6 +3,7 @@
 //
 
 #include <stdexcept>
+#include <ctime>
 #include "json.hpp"
 
 #ifndef CPP_LABS_LABS_H
@@ -13,7 +14,12 @@ void CheckArgumentsAmount (int arguments_amount);
 void CheckInputPath (const std::filesystem::path& path_to_filesystem_object);
 bool IsJsonCorrect(const nlohmann::json& json);
 nlohmann::json parseFile(const std::filesystem::path& path_to_filesystem_object);
+
 void ModifyJsonObject(nlohmann::json& json_object);
 void MakeFile(nlohmann::json& json_object);
+
+std::tm GetRequiredDateTime();
+nlohmann::json TmToJson(tm date_time);
+void writeToFile(const std::filesystem::path& path_to_filesystem_object, nlohmann::json& json_object);
 
 #endif //CPP_LABS_LABS_H
