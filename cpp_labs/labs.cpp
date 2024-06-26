@@ -130,15 +130,18 @@ void MakeFile(nlohmann::json& json_object) {
 
 std::tm GetRequiredDateTime() {
     std::time_t now = std::time(nullptr);
+
+    std::time_t yesterday = now - 86400;
+
     std::tm localTime;
-    localtime_s(&localTime, &now);
+    localtime_s(&localTime, &yesterday);
     return localTime;
 }
 
 nlohmann::json TmToJson(tm date_time) {
     return nlohmann::json{
             {"year", date_time.tm_year + 1900},
-            {"month", date_time.tm_mon + 1},
+            {"month", date_time.tm_mon},
             {"day", date_time.tm_mday},
             {"hour", date_time.tm_hour},
             {"minute", date_time.tm_min},

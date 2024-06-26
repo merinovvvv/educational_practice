@@ -31,15 +31,18 @@ int main(int argc, char *argv[]) {
 //    CheckInputPath(argv[1]);
 //    std::tm date_time = GetRequiredDateTime();
 //    nlohmann::json date_time_json = TmToJson(date_time);
-//    std::cout << "Current Time in JSON: " << date_time_json.dump(4) << std::endl;
+//    std::cout << "Time in JSON: " << date_time_json.dump(4) << std::endl;
 //    writeToFile(argv[1], date_time_json);
 
-    //lab04:
-    CheckArgumentsAmount(argc);
-    CheckInputPath(argv[1]);
-    nlohmann::json jsonObject = GetFsObjectInfo(argv[1]);
-    std::cout << jsonObject.dump(4) << std::endl;
-    writeJsonToFile(argv[1], jsonObject);
+//    //lab04:
+//    CheckArgumentsAmount(argc);
+//    CheckInputPath(argv[1]);
+//    nlohmann::json jsonObject = GetFsObjectInfo(argv[1]);
+//    std::cout << jsonObject.dump(4) << std::endl;
+//    writeJsonToFile(argv[1], jsonObject);
+
+    //lab05:
+
 
     return 0;
 }
