@@ -22,4 +22,10 @@ std::tm GetRequiredDateTime();
 nlohmann::json TmToJson(tm date_time);
 void writeToFile(const std::filesystem::path& path_to_filesystem_object, nlohmann::json& json_object);
 
+std::size_t Size (const std::filesystem::path& path_to_filesystem_object);
+nlohmann::json GetRegularFileInfo (const std::filesystem::path& path_to_file);
+nlohmann::json GetDirectoryInfo (const std::filesystem::path& path_to_directory);
+nlohmann::json GetFsObjectInfo (const std::filesystem::path& path_to_filesystem_object);
+void writeJsonToFile (const std::filesystem::path& path_to_filesystem_object, nlohmann::json& json_object);
+
 #endif //CPP_LABS_LABS_H
