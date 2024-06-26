@@ -4,13 +4,12 @@
 #include "labs.h"
 
 int main(int argc, char *argv[]) {
-    CheckArgumentsAmount(argc);
-    CheckInputPath(argv[1]);
-    nlohmann::json object = parseFile(argv[1]);
 
-    ModifyJsonObject(object);
-    MakeFile(object);
-
+//    lab01:
+//    CheckArgumentsAmount(argc);
+//    CheckInputPath(argv[1]);
+//    nlohmann::json object = parseFile(argv[1]);
+//
 //    bool isJson = IsJsonCorrect(object);
 //
 //    if (isJson) {
@@ -19,7 +18,13 @@ int main(int argc, char *argv[]) {
 //        std::cout << "Structure of JSON-file by path " << argv[1] <<  " is incorrect.";
 //    }
 
-    //system("pause");
-    
+//  lab02:
+    CheckArgumentsAmount(argc);
+    CheckInputPath(argv[1]);
+    nlohmann::json object = parseFile(argv[1]);
+
+    ModifyJsonObject(object);
+    MakeFile(object);
+
     return 0;
 }

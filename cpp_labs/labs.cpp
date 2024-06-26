@@ -110,7 +110,7 @@ void ModifyJsonObject(nlohmann::json& json_object) {
 
 void MakeFile(nlohmann::json& json_object) {
     for (nlohmann::json::iterator it = json_object.begin(); it != json_object.end(); ++it) {
-        const std::string filename = "CMakeFiles/lab02_data/" + it.key() + ".json";
+        const std::string filename = "../lab02_folder/" + it.key() + ".json";
         std::ofstream file(filename, std::ios::out);
 
 //        if (!file.is_open()) {
