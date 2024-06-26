@@ -1,0 +1,12 @@
+{
+  "key1": {
+    "num1": 10,
+    "string": "some string",
+    "num2": 5
+  },
+  "key2": {
+    "num1": 10,
+    "string": "some string123",
+    "num2": 100
+  }
+}

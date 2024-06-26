@@ -6,25 +6,25 @@
 #include <stdexcept>
 #include <fstream>
 #include "json.hpp"
-#include "lab01.h"
+#include "labs.h"
 
 void CheckArgumentsAmount (int arguments_amount) {
     try {
         if (arguments_amount != 2) {
             std::ostringstream oss;
-            oss << "Invalid command line arguments amount: current – " << arguments_amount << ", required – 2!";
+            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
             throw std::invalid_argument (oss.str());
         }
     } catch (const std::exception& e) {
         std::cerr << e.what();
-        system("pause");
-        exit(0);
+        //system("pause");
+        //exit(0);
     }
 }
 
 void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) {
     try {
-        std::filesystem::path filepath( "path_to_filesystem_object" );
+        std::filesystem::path filepath( path_to_filesystem_object.string() );
         if (!std::filesystem::exists(filepath)) {
             std::ostringstream oss;
             oss << "Filesystem object by path " << filepath << " is not exists!";
@@ -42,8 +42,8 @@ void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) {
         }
     } catch (const std::exception& e) {
         std::cerr << e.what();
-        system("pause");
-        exit(0);
+        //system("pause");
+        //exit(0);
     }
 }
 
@@ -86,7 +86,44 @@ nlohmann::json parseFile(const std::filesystem::path& path_to_filesystem_object)
         return json_from_file;
     } catch (const nlohmann::json::parse_error& e) {
         std::cerr << "Parse error: " << e.what() << std::endl;
-        system("pause");
+        //system("pause");
         return 1;
+    }
+}
+
+void ModifyJsonObject(nlohmann::json& json_object) {
+    for (auto it = json_object.begin(); it != json_object.end(); ++it) {
+        if (it.value().is_object()) {
+            nlohmann::json& valueObj = it.value();
+            for (auto it_2 = valueObj.begin(); it_2 != valueObj.end();) {
+                if (it_2.value().is_number_integer() && it_2.value().get<int>() % 2 == 0) {
+                    std::cout << "Removing: " << it_2.key() << " = " << it_2.value() << std::endl;
+                    it_2 = valueObj.erase(it_2);
+                } else {
+                    ++it_2;
+                }
+            }
+        }
+    }
+}
+
+
+void MakeFile(nlohmann::json& json_object) {
+    for (nlohmann::json::iterator it = json_object.begin(); it != json_object.end(); ++it) {
+        const std::string filename = "CMakeFiles/lab02_data/" + it.key() + ".json";
+        std::ofstream file(filename, std::ios::out);
+
+//        if (!file.is_open()) {
+//            std::cerr << "Failed to open file: " << filename << std::endl;
+//            continue;
+//        }
+
+        try {
+            nlohmann::json valueObj = it.value();
+            file << valueObj.dump(4);
+            file.close();
+        } catch (const std::exception& e) {
+            std::cerr << "Error writing to file: " << filename << ". " << e.what() << std::endl;
+        }
     }
 }
