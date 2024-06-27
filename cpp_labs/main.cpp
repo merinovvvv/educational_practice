@@ -57,12 +57,16 @@ int main(int argc, char *argv[]) {
 //    setInsert (filesSet, argv[1], argv[2]);
 
     //lab07:
+//    CheckArgumentsAmount(argc);
+//    CheckDirectoryPath(argv[1]);
+//    CheckDirectoryPath(argv[2]);
+//    FilesStorage filesStorage(argv[2]);
+//    filesStorage.InitStorage();
+//    filesStorage.CopyFilesFromDirectory(argv[1], argv[2]);
+
+    //lab08:
     CheckArgumentsAmount(argc);
     CheckDirectoryPath(argv[1]);
-    CheckDirectoryPath(argv[2]);
-    FilesStorage filesStorage(argv[2]);
-    filesStorage.InitStorage();
-    filesStorage.CopyFilesFromDirectory(argv[1], argv[2]);
-
+    RemoveDuplicatesFromDirectory(argv[1]);
     return 0;
 }

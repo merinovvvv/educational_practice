@@ -8,19 +8,19 @@
 #include "json.hpp"
 #include "labs.h"
 
-//void CheckArgumentsAmount (int arguments_amount) {
-//    try {
-//        if (arguments_amount != 2) {
-//            std::ostringstream oss;
-//            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
-//            throw std::invalid_argument (oss.str());
-//        }
-//    } catch (const std::exception& e) {
-//        std::cerr << e.what();
-//        //system("pause");
-//        //exit(0);
-//    }
-//}
+void CheckArgumentsAmount (int arguments_amount) { //for lab 1-5, 8
+    try {
+        if (arguments_amount != 2) {
+            std::ostringstream oss;
+            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
+            throw std::invalid_argument (oss.str());
+        }
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        //system("pause");
+        //exit(0);
+    }
+}
 
 //void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for labs 1, 2
 //    try {
@@ -301,11 +301,11 @@ void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { /
         if (!std::filesystem::exists(filepath)) {
             std::ostringstream oss;
             oss << "Filesystem object by path " << filepath << " is not exists!";
-            throw std::invalid_argument (oss.str());
+            throw std::runtime_error (oss.str());
         } else if (!std::filesystem::is_directory(filepath)) {
             std::ostringstream oss;
             oss << "Filesystem object by path " << filepath << " is not a directory!";
-            throw std::invalid_argument (oss.str());
+            throw std::runtime_error (oss.str());
         }
     } catch (const std::exception& e) {
         std::cerr << e.what();
@@ -404,19 +404,19 @@ namespace directory_content {
     }
 }
 
-void CheckArgumentsAmount (int arguments_amount) { //for lab06
-    try {
-        if (arguments_amount != 3) {
-            std::ostringstream oss;
-            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 3!";
-            throw std::invalid_argument (oss.str());
-        }
-    } catch (const std::exception& e) {
-        std::cerr << e.what();
-        //system("pause");
-        //exit(0);
-    }
-}
+//void CheckArgumentsAmount (int arguments_amount) { //for lab06, lab07
+//    try {
+//        if (arguments_amount != 3) {
+//            std::ostringstream oss;
+//            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 3!";
+//            throw std::invalid_argument (oss.str());
+//        }
+//    } catch (const std::exception& e) {
+//        std::cerr << e.what();
+//        //system("pause");
+//        //exit(0);
+//    }
+//}
 
 void CheckDirectoryPath (const std::filesystem::path& path_to_directory) {
     try {
@@ -550,6 +550,29 @@ void FilesStorage::CopyFilesFromDirectory(const std::filesystem::path& sourceDir
         if (dir.is_regular_file()) {
             std::filesystem::path destinationFile = destinationDirectory / dir.path().filename();
             CopyFile(dir.path());
+        }
+    }
+}
+
+std::size_t GetFileContentHash (const std::filesystem::path& path_to_file) {
+    if (std::filesystem::is_regular_file(path_to_file)) {
+        std::string str = ReadFileContent(path_to_file);
+        std::hash<std::string> hash_fn;
+
+        size_t hash = hash_fn(str);
+        return hash;
+    }
+    return 0;
+}
+
+void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directory) {
+    std::set <std::size_t> hashes;
+    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
+        size_t hash = GetFileContentHash(dir);
+        auto [_, inserted] = hashes.insert(hash);
+        if (!inserted) {
+            std::filesystem::remove(dir);
+            std::cout << "File by path " << dir.path() << " has been removed";
         }
     }
 }

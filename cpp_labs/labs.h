@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <ctime>
 #include <set>
-
+#include <functional>
 #include "json.hpp"
 
 #ifndef CPP_LABS_LABS_H
@@ -80,5 +80,8 @@ public:
     void CopyFilesFromDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory);
 };
 
+
+std::size_t GetFileContentHash (const std::filesystem::path& path_to_file);
+void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directory);
 
 #endif //CPP_LABS_LABS_H
