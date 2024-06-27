@@ -221,48 +221,48 @@ std::size_t Size (const std::filesystem::path& path_to_filesystem_object) {
 }
 
 nlohmann::json GetRegularFileInfo (const std::filesystem::path& path_to_file) {
-        nlohmann::json jsonObject;
+    nlohmann::json jsonObject;
 
-        jsonObject["type"] = "reguar_file";
-        jsonObject["full_name"] = path_to_file.filename().string();
-        jsonObject["name_without_extension"] = path_to_file.stem().string();
+    jsonObject["type"] = "reguar_file";
+    jsonObject["full_name"] = path_to_file.filename().string();
+    jsonObject["name_without_extension"] = path_to_file.stem().string();
 
-        if (path_to_file.has_extension()) {
-            jsonObject["extension"] = path_to_file.extension().string();
-        } else {
-            jsonObject["extension"] = nullptr;
-        }
+    if (path_to_file.has_extension()) {
+        jsonObject["extension"] = path_to_file.extension().string();
+    } else {
+        jsonObject["extension"] = nullptr;
+    }
 
-        jsonObject["size"] = Size(path_to_file);
+    jsonObject["size"] = Size(path_to_file);
 
-        return jsonObject;
+    return jsonObject;
 }
 
 nlohmann::json GetDirectoryInfo (const std::filesystem::path& path_to_directory) {
-        std::ofstream out(path_to_directory, std::ios::out);
+    std::ofstream out(path_to_directory, std::ios::out);
 
-        nlohmann::json jsonObject;
+    nlohmann::json jsonObject;
 
-        jsonObject["type"] = "directory";
+    jsonObject["type"] = "directory";
 
-        jsonObject["name"] = path_to_directory.stem().string();
-        jsonObject["size"] = Size(path_to_directory);
+    jsonObject["name"] = path_to_directory.stem().string();
+    jsonObject["size"] = Size(path_to_directory);
 
-        size_t files_amount = 0;
-        size_t directories_amount = 0;
+    size_t files_amount = 0;
+    size_t directories_amount = 0;
 
-        for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
-            if (std::filesystem::is_regular_file(dir.path())) {
-                ++files_amount;
-            } else if (std::filesystem::is_directory(dir.path())) {
-                ++directories_amount;
-            }
+    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
+        if (std::filesystem::is_regular_file(dir.path())) {
+            ++files_amount;
+        } else if (std::filesystem::is_directory(dir.path())) {
+            ++directories_amount;
         }
+    }
 
-        jsonObject["files_amount"] = files_amount;
-        jsonObject["directories_amount"] = directories_amount;
+    jsonObject["files_amount"] = files_amount;
+    jsonObject["directories_amount"] = directories_amount;
 
-        return jsonObject;
+    return jsonObject;
 }
 
 nlohmann::json GetFsObjectInfo (const std::filesystem::path& path_to_filesystem_object) {
@@ -418,25 +418,16 @@ void CheckArgumentsAmount (int arguments_amount) { //for lab06
     }
 }
 
-void CheckDirectoryPath (const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2) {
+void CheckDirectoryPath (const std::filesystem::path& path_to_directory) {
     try {
-        std::filesystem::path filepath1( path_to_directory_1.string() );
-        std::filesystem::path filepath2( path_to_directory_2.string() );
-        if (!std::filesystem::exists(filepath1)) {
+        std::filesystem::path filepath( path_to_directory.string() );
+        if (!std::filesystem::exists(filepath)) {
             std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath1 << " is not exists!";
+            oss << "Filesystem object by path " << filepath << " is not exists!";
             throw std::invalid_argument (oss.str());
-        } else if (!std::filesystem::exists(filepath2)) {
+        } else if (!std::filesystem::is_directory(filepath)) {
             std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath2 << " is not exists!";
-            throw std::invalid_argument (oss.str());
-        } else if (!std::filesystem::is_directory(filepath1)) {
-            std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath1 << " is not a directory!";
-            throw std::invalid_argument (oss.str());
-        } else if (!std::filesystem::is_directory(filepath2)) {
-            std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath2 << " is not a directory!";
+            oss << "Filesystem object by path " << filepath << " is not a directory!";
             throw std::invalid_argument (oss.str());
         }
     } catch (const std::exception& e) {
@@ -458,7 +449,7 @@ std::string ReadFileContent (const std::filesystem::path& path_to_file) {
 
         if (!in.is_open()) {
             std::ostringstream os;
-            os << "Filesystem object by path " << path_to_file << " hasn’t been opened!";
+            os << "Filesystem object by path " << path_to_file << " has not been opened!";
             throw std::invalid_argument(os.str());
         }
 
@@ -484,6 +475,8 @@ std::string ReadFileContent (const std::filesystem::path& path_to_file) {
         //system("pause");
         //exit(0);
     }
+
+    return "";
 }
 
 std::set<std::string> GetFilesContentFromDirectory (const std::filesystem::path& path_to_directory) {
@@ -503,11 +496,11 @@ std::set<std::string> GetFilesContentFromDirectory (const std::filesystem::path&
 
 void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2) {
 
-    for (const auto& dir : std::filesystem::recursive_directory_iterator(path_to_directory_1)) {
+    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory_1)) {
 
         bool isEqual = false;
 
-        for (const auto& dir : std::filesystem::recursive_directory_iterator(path_to_directory_1)) {
+        for (const auto& dir : std::filesystem::directory_iterator(path_to_directory_1)) {
             std::string fileContent = ReadFileContent(dir);
 
             for (auto it = filesSet.begin(); it != filesSet.end(); ++it) {
@@ -521,6 +514,42 @@ void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& p
                 std::filesystem::path targetFilePath = path_to_directory_2 / dir.path().filename();
                 std::filesystem::copy_file(dir, targetFilePath, std::filesystem::copy_options::overwrite_existing);
             }
+        }
+    }
+}
+
+void FilesStorage::InitStorage() {
+    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory_)) {
+        if (std::filesystem::is_regular_file(dir)) {
+            files_content_storage_.insert(ReadFileContent(dir.path()));
+        }
+    }
+}
+
+void FilesStorage::CopyFile(const std::filesystem::path& path_to_file) {
+
+    bool isEqual = false;
+
+    std::string fileContent = ReadFileContent(path_to_file);
+
+    for (auto it = files_content_storage_.begin(); it != files_content_storage_.end(); ++it) {
+        if (*it == fileContent) {
+            isEqual = true;
+        }
+    }
+    if (!isEqual) {
+        files_content_storage_.insert(fileContent);
+        std::cout << "File by path " << path_to_file << " has been copied to directory by path " << path_to_directory_ << " !";
+        std::filesystem::path targetFilePath = path_to_directory_ / path_to_file.filename();
+        std::filesystem::copy_file(path_to_file, targetFilePath, std::filesystem::copy_options::overwrite_existing);
+    }
+}
+
+void FilesStorage::CopyFilesFromDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory) {
+    for (const auto& dir : std::filesystem::directory_iterator(sourceDirectory)) {
+        if (dir.is_regular_file()) {
+            std::filesystem::path destinationFile = destinationDirectory / dir.path().filename();
+            CopyFile(dir.path());
         }
     }
 }

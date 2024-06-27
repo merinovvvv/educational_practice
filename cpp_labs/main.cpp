@@ -50,10 +50,19 @@ int main(int argc, char *argv[]) {
 //    std::cout << filesInfo;
 
     //lab06:
+//    CheckArgumentsAmount(argc);
+//    CheckDirectoryPath(argv[1]);
+//    CheckDirectoryPath(argv[2]);
+//    std::set<std::string> filesSet = GetFilesContentFromDirectory(argv[2]);
+//    setInsert (filesSet, argv[1], argv[2]);
+
+    //lab07:
     CheckArgumentsAmount(argc);
-    CheckDirectoryPath(argv[1], argv[2]);
-    std::set<std::string> filesSet = GetFilesContentFromDirectory(argv[2]);
-    setInsert (filesSet, argv[1], argv[2]);
+    CheckDirectoryPath(argv[1]);
+    CheckDirectoryPath(argv[2]);
+    FilesStorage filesStorage(argv[2]);
+    filesStorage.InitStorage();
+    filesStorage.CopyFilesFromDirectory(argv[1], argv[2]);
 
     return 0;
 }

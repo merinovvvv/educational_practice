@@ -61,9 +61,24 @@ namespace directory_content {
     Info GetInfo(const std::filesystem::path& path_to_directory);
 }
 
-void CheckDirectoryPath (const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2);
+void CheckDirectoryPath (const std::filesystem::path& path_to_directory);
 std::string ReadFileContent (const std::filesystem::path& path_to_file);
 std::set<std::string> GetFilesContentFromDirectory (const std::filesystem::path& path_to_directory);
 void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2);
+
+class FilesStorage {
+
+public:
+    std::filesystem::path path_to_directory_;
+    std::set<std::string> files_content_storage_;
+
+    FilesStorage(const std::filesystem::path& path_to_directory): path_to_directory_(path_to_directory) {};
+
+    void InitStorage();
+    void CopyFile(const std::filesystem::path& path_to_file);
+
+    void CopyFilesFromDirectory(const std::filesystem::path& sourceDirectory, const std::filesystem::path& destinationDirectory);
+};
+
 
 #endif //CPP_LABS_LABS_H
