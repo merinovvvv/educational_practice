@@ -182,24 +182,24 @@ void writeToFile(const std::filesystem::path& path_to_filesystem_object, nlohman
 //    }
 //}
 
-void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for lab 4
-    try {
-        std::filesystem::path filepath( path_to_filesystem_object.string() );
-        if (!std::filesystem::exists(filepath)) {
-            std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath << " is not exists!";
-            throw std::invalid_argument (oss.str());
-        } else if (!std::filesystem::is_regular_file(filepath) && !std::filesystem::is_directory(filepath)) {
-            std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath << " has invalid type!";
-            throw std::invalid_argument (oss.str());
-        }
-    } catch (const std::exception& e) {
-        std::cerr << e.what();
-        //system("pause");
-        //exit(0);
-    }
-}
+//void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for lab 4
+//    try {
+//        std::filesystem::path filepath( path_to_filesystem_object.string() );
+//        if (!std::filesystem::exists(filepath)) {
+//            std::ostringstream oss;
+//            oss << "Filesystem object by path " << filepath << " is not exists!";
+//            throw std::invalid_argument (oss.str());
+//        } else if (!std::filesystem::is_regular_file(filepath) && !std::filesystem::is_directory(filepath)) {
+//            std::ostringstream oss;
+//            oss << "Filesystem object by path " << filepath << " has invalid type!";
+//            throw std::invalid_argument (oss.str());
+//        }
+//    } catch (const std::exception& e) {
+//        std::cerr << e.what();
+//        //system("pause");
+//        //exit(0);
+//    }
+//}
 
 std::size_t Size (const std::filesystem::path& path_to_filesystem_object) {
 
@@ -292,5 +292,114 @@ void writeJsonToFile (const std::filesystem::path& path_to_filesystem_object, nl
         jsonData.close();
     } catch (const std::runtime_error& e) {
         std::cerr << "Failed to open file for writing: " + path_to_filesystem_object.string();
+    }
+}
+
+void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for lab 5
+    try {
+        std::filesystem::path filepath( path_to_filesystem_object.string() );
+        if (!std::filesystem::exists(filepath)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath << " is not exists!";
+            throw std::invalid_argument (oss.str());
+        } else if (!std::filesystem::is_directory(filepath)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath << " is not a directory!";
+            throw std::invalid_argument (oss.str());
+        }
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        //system("pause");
+        //exit(0);
+    }
+}
+
+namespace filesystem_object {
+    std::size_t Size(const std::filesystem::path &path_to_filesystem_object) {
+        size_t totalSize = 0;
+        if (std::filesystem::is_directory(path_to_filesystem_object)) {
+            for (const auto &dir: std::filesystem::recursive_directory_iterator(path_to_filesystem_object)) {
+                if (std::filesystem::is_regular_file(dir)) {
+                    totalSize += std::filesystem::file_size(dir);
+                }
+            }
+        } else if (std::filesystem::is_regular_file(path_to_filesystem_object)) {
+            totalSize = std::filesystem::file_size(path_to_filesystem_object);
+        } else {
+            throw std::runtime_error("Invalid filesystem object.");
+        }
+        return totalSize;
+    }
+
+    Info::Info(const std::filesystem::path &path_to_filesystem_object) {
+        if (std::filesystem::is_directory(path_to_filesystem_object)) {
+            name = path_to_filesystem_object.stem().string();
+            type = "directory";
+            size = Size(path_to_filesystem_object);
+        } else if (std::filesystem::is_regular_file(path_to_filesystem_object)) {
+            name = path_to_filesystem_object.stem().string();
+            size = std::filesystem::file_size(path_to_filesystem_object);
+            auto extension = path_to_filesystem_object.extension().string();
+            if (extension.empty()) {
+                type = "file without extension";
+            } else {
+                type = extension;
+            }
+        } else {
+            throw std::runtime_error("Invalid filesystem object.");
+        }
+    }
+
+    std::ostream &operator<<(std::ostream &os, const Info &info) {
+        os << std::left << std::setfill(' ')
+           << std::setw(50) << info.name
+           << std::setw(20) << info.type
+           << std::setw(20) << info.size;
+        return os;
+    }
+
+    Info GetInfo (const std::filesystem::path& path_to_filesystem_object) {
+        return Info(path_to_filesystem_object);
+    }
+}
+
+namespace directory_content {
+
+    Info::Info(const std::filesystem::path &path_to_dir) {
+        if (std::filesystem::is_directory(path_to_dir)) {
+            path_to_directory = path_to_dir;
+            size =  filesystem_object::Size(path_to_dir);
+
+            size_t filesAmount = 0;
+            size_t directoriesAmount = 0;
+
+            for (const auto& obj :  std::filesystem::directory_iterator(path_to_dir)) {
+                if (std::filesystem::is_regular_file(obj)) {
+                    filesAmount++;
+                } else if (std::filesystem::is_directory(obj)) {
+                    directoriesAmount++;
+                } else {
+                    throw std::invalid_argument("Unknown type of file.");
+                }
+            }
+
+            files_amount = filesAmount;
+            directories_amount = directoriesAmount;
+
+        }
+    }
+
+    std::ostream& operator<< (std::ostream& os, const Info& info) {
+        os << std::left << std::setfill(' ');
+
+        os << std::setw(50) << "Path to directory: " << std::setw(20) << info.path_to_directory << "\n";
+        os << std::setw(50) << "Size (bytes): " << std::setw(20) << info.size << "\n";
+        os << std::setw(50) << "Files amount (1st lvl): " << std::setw(20) << info.files_amount << "\n";
+        os << std::setw(50) << "Directories amount (1st lvl): " << std::setw(20) << info.directories_amount  << "\n";
+        return os;
+    }
+
+    Info GetInfo(const std::filesystem::path& path_to_directory) {
+        return Info(path_to_directory);
     }
 }
