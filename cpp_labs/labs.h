@@ -4,6 +4,8 @@
 
 #include <stdexcept>
 #include <ctime>
+#include <set>
+
 #include "json.hpp"
 
 #ifndef CPP_LABS_LABS_H
@@ -58,5 +60,10 @@ namespace directory_content {
 
     Info GetInfo(const std::filesystem::path& path_to_directory);
 }
+
+void CheckDirectoryPath (const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2);
+std::string ReadFileContent (const std::filesystem::path& path_to_file);
+std::set<std::string> GetFilesContentFromDirectory (const std::filesystem::path& path_to_directory);
+void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2);
 
 #endif //CPP_LABS_LABS_H

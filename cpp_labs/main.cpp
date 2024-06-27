@@ -42,12 +42,18 @@ int main(int argc, char *argv[]) {
 //    writeJsonToFile(argv[1], jsonObject);
 
     //lab05:
+//    CheckArgumentsAmount(argc);
+//    CheckInputPath(argv[1]);
+//    directory_content::Info dirInfo = directory_content::GetInfo(argv[1]);
+//    std::cout << "\n" << dirInfo << "\n\n";
+//    filesystem_object::Info filesInfo = filesystem_object::GetInfo(argv[1]);
+//    std::cout << filesInfo;
+
+    //lab06:
     CheckArgumentsAmount(argc);
-    CheckInputPath(argv[1]);
-    directory_content::Info dirInfo = directory_content::GetInfo(argv[1]);
-    std::cout << "\n" << dirInfo << "\n\n";
-    filesystem_object::Info filesInfo = filesystem_object::GetInfo(argv[1]);
-    std::cout << filesInfo;
+    CheckDirectoryPath(argv[1], argv[2]);
+    std::set<std::string> filesSet = GetFilesContentFromDirectory(argv[2]);
+    setInsert (filesSet, argv[1], argv[2]);
 
     return 0;
 }

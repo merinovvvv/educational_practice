@@ -8,19 +8,19 @@
 #include "json.hpp"
 #include "labs.h"
 
-void CheckArgumentsAmount (int arguments_amount) {
-    try {
-        if (arguments_amount != 2) {
-            std::ostringstream oss;
-            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
-            throw std::invalid_argument (oss.str());
-        }
-    } catch (const std::exception& e) {
-        std::cerr << e.what();
-        //system("pause");
-        //exit(0);
-    }
-}
+//void CheckArgumentsAmount (int arguments_amount) {
+//    try {
+//        if (arguments_amount != 2) {
+//            std::ostringstream oss;
+//            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
+//            throw std::invalid_argument (oss.str());
+//        }
+//    } catch (const std::exception& e) {
+//        std::cerr << e.what();
+//        //system("pause");
+//        //exit(0);
+//    }
+//}
 
 //void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for labs 1, 2
 //    try {
@@ -401,5 +401,126 @@ namespace directory_content {
 
     Info GetInfo(const std::filesystem::path& path_to_directory) {
         return Info(path_to_directory);
+    }
+}
+
+void CheckArgumentsAmount (int arguments_amount) { //for lab06
+    try {
+        if (arguments_amount != 3) {
+            std::ostringstream oss;
+            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 3!";
+            throw std::invalid_argument (oss.str());
+        }
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        //system("pause");
+        //exit(0);
+    }
+}
+
+void CheckDirectoryPath (const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2) {
+    try {
+        std::filesystem::path filepath1( path_to_directory_1.string() );
+        std::filesystem::path filepath2( path_to_directory_2.string() );
+        if (!std::filesystem::exists(filepath1)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath1 << " is not exists!";
+            throw std::invalid_argument (oss.str());
+        } else if (!std::filesystem::exists(filepath2)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath2 << " is not exists!";
+            throw std::invalid_argument (oss.str());
+        } else if (!std::filesystem::is_directory(filepath1)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath1 << " is not a directory!";
+            throw std::invalid_argument (oss.str());
+        } else if (!std::filesystem::is_directory(filepath2)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath2 << " is not a directory!";
+            throw std::invalid_argument (oss.str());
+        }
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        //system("pause");
+        //exit(0);
+    }
+}
+
+std::string ReadFileContent (const std::filesystem::path& path_to_file) {
+    try {
+        std::filesystem::path filepath( path_to_file.string() );
+        if (!std::filesystem::exists(filepath)) {
+            std::ostringstream oss;
+            oss << "Filesystem object by path " << filepath << " is not exists!";
+            throw std::invalid_argument (oss.str());
+        }
+        std::ifstream in (filepath, std::ios::in);
+
+        if (!in.is_open()) {
+            std::ostringstream os;
+            os << "Filesystem object by path " << path_to_file << " hasn’t been opened!";
+            throw std::invalid_argument(os.str());
+        }
+
+        in.seekg(0, std::ios::end);
+        std::streamsize size = in.tellg();
+        in.seekg(0, std::ios::beg);
+
+        std::string content;
+        content.resize(static_cast<size_t>(size));
+
+        if (!in.read(&content[0], size)) {
+            std::ostringstream oss;
+            oss << "Failed to read file content from " << path_to_file;
+            throw std::runtime_error(oss.str());
+        }
+
+        in.close();
+
+        return content;
+
+    } catch (const std::exception& e) {
+        std::cerr << e.what();
+        //system("pause");
+        //exit(0);
+    }
+}
+
+std::set<std::string> GetFilesContentFromDirectory (const std::filesystem::path& path_to_directory) {
+
+    std::set<std::string> contents;
+
+    for (const auto& entry : std::filesystem::directory_iterator(path_to_directory)) {
+        if (entry.is_regular_file()) {
+            std::string file_content = ReadFileContent(entry.path());
+            if (!file_content.empty()) {
+                contents.insert(file_content);
+            }
+        }
+    }
+    return contents;
+}
+
+void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2) {
+
+    for (const auto& dir : std::filesystem::recursive_directory_iterator(path_to_directory_1)) {
+
+        bool isEqual = false;
+
+        for (const auto& dir : std::filesystem::recursive_directory_iterator(path_to_directory_1)) {
+            std::string fileContent = ReadFileContent(dir);
+
+            for (auto it = filesSet.begin(); it != filesSet.end(); ++it) {
+                if (*it == fileContent) {
+                    isEqual = true;
+                }
+            }
+            if (!isEqual) {
+                filesSet.insert(fileContent);
+                std::cout << "File by path " << dir << " has been copied to directory by path " << path_to_directory_2 << " !";
+                std::filesystem::path targetFilePath = path_to_directory_2 / dir.path().filename();
+                std::filesystem::copy_file(dir, targetFilePath, std::filesystem::copy_options::overwrite_existing);
+            }
+        }
     }
 }
