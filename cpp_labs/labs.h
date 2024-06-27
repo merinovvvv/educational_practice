@@ -84,4 +84,24 @@ public:
 std::size_t GetFileContentHash (const std::filesystem::path& path_to_file);
 void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directory);
 
+std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file);
+void Move(const std::filesystem::path& path_to_file);
+void MoveForFiles(const std::filesystem::path& path_to_directory);
+
+class FileName {
+public:
+    std::filesystem::path path_to_current_file;
+    uint16_t year;
+    uint16_t month;
+    uint16_t day;
+    std::string only_name;
+
+    FileName(std::filesystem::path path_to_file): path_to_current_file(path_to_file) {};
+
+    void Parse();
+    bool IsRemoveRequired() const;
+};
+
+void MoveAndDelete(const std::filesystem::path& path_to_directory);
+
 #endif //CPP_LABS_LABS_H

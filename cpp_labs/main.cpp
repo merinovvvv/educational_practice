@@ -65,8 +65,19 @@ int main(int argc, char *argv[]) {
 //    filesStorage.CopyFilesFromDirectory(argv[1], argv[2]);
 
     //lab08:
+//    CheckArgumentsAmount(argc);
+//    CheckDirectoryPath(argv[1]);
+//    RemoveDuplicatesFromDirectory(argv[1]);
+
+    //lab09:
+//    CheckArgumentsAmount(argc);
+//    CheckDirectoryPath(argv[1]);
+//    MoveForFiles(argv[1]);
+
+    //lab10:
     CheckArgumentsAmount(argc);
     CheckDirectoryPath(argv[1]);
-    RemoveDuplicatesFromDirectory(argv[1]);
+    MoveAndDelete(argv[1]);
+
     return 0;
 }

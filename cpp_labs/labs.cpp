@@ -576,3 +576,116 @@ void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directo
         }
     }
 }
+
+//std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file) { //for lab09
+//    try {
+//        std::string filename = path_to_file.filename().string();
+//        std::string stem = path_to_file.stem().string();
+//        std::string extension = path_to_file.extension().string();
+//
+//        std::size_t first_underscore = filename.find('_');
+//        std::size_t second_underscore = filename.find('_', first_underscore + 1);
+//        std::size_t third_underscore = filename.find('_', second_underscore + 1);
+//
+//        if (first_underscore == std::string::npos || second_underscore == std::string::npos || third_underscore == std::string::npos) {
+//            throw std::invalid_argument("Invalid filename. File path: " + path_to_file.string() + "!");
+//        }
+//
+//        std::string year = stem.substr(0, first_underscore);
+//        std::string month = stem.substr(first_underscore + 1, second_underscore - first_underscore - 1);
+//        std::string day = stem.substr(second_underscore + 1, third_underscore - second_underscore - 1);
+//        std::string name = stem.substr(third_underscore + 1);
+//
+//        std::filesystem::path new_path = path_to_file.parent_path();
+//        new_path.append(year);
+//        new_path.append(month);
+//        new_path.append(day);
+//        new_path.append(name + extension);
+//
+//        return new_path;
+//
+//    } catch (std::exception& ex) {
+//        std::cerr << ex.what();
+//        exit(0);
+//    }
+//}
+
+void Move(const std::filesystem::path& path_to_file) {
+
+    try {
+        std::filesystem::path new_path = GetPathToMove(path_to_file);
+        std::filesystem::create_directories(new_path.parent_path());
+        std::filesystem::rename(path_to_file, new_path);
+        std::cout << "File by path " << path_to_file << " has been moved to " << new_path << "!";
+    } catch (std::exception& ex) {
+        std::cerr << ex.what();
+    }
+}
+
+void MoveForFiles(const std::filesystem::path& path_to_directory) {
+    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
+        if (std::filesystem::is_regular_file(dir)) {
+                Move(dir.path());
+        }
+    }
+}
+
+void FileName::Parse() {
+    try {
+        std::string filename = path_to_current_file.filename().string();
+        std::string stem = path_to_current_file.stem().string();
+        std::string extension = path_to_current_file.extension().string();
+
+        std::size_t first_underscore = filename.find('_');
+        std::size_t second_underscore = filename.find('_', first_underscore + 1);
+        std::size_t third_underscore = filename.find('_', second_underscore + 1);
+
+        if (first_underscore == std::string::npos || second_underscore == std::string::npos || third_underscore == std::string::npos) {
+            throw std::invalid_argument("Invalid filename. File path: " + path_to_current_file.string() + "!");
+        }
+
+        year = std::stoll(stem.substr(0, first_underscore));
+        month = std::stoll(stem.substr(first_underscore + 1, second_underscore - first_underscore - 1));
+        day = std::stoll(stem.substr(second_underscore + 1, third_underscore - second_underscore - 1));
+        only_name = stem.substr(third_underscore + 1);
+
+    } catch (std::exception& ex) {
+        std::cerr << ex.what();
+        exit(0);
+    }
+}
+
+bool FileName::IsRemoveRequired() const {
+    if (year % 5 == 0 && day % 5 == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file) { //for lab10
+
+    FileName fname(path_to_file);
+    fname.Parse();
+
+    std::filesystem::path new_path = path_to_file.parent_path();
+    new_path.append(std::to_string(fname.year));
+    new_path.append(std::to_string(fname.month));
+    new_path.append(std::to_string(fname.day));
+    new_path.append(fname.only_name + path_to_file.extension().string());
+
+    return new_path;
+}
+
+void MoveAndDelete(const std::filesystem::path& path_to_directory) {
+    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
+        FileName fName(dir);
+        fName.Parse();
+        if (fName.IsRemoveRequired()) {
+            std::filesystem::remove(fName.path_to_current_file);
+        }
+        if (std::filesystem::is_regular_file(dir)) {
+            Move(dir.path());
+        }
+    }
+}
