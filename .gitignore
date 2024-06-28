@@ -91,6 +91,7 @@ StyleCopReport.xml
 *.sln
 
 # Side directories
+nlohmann_json
 spdlog
 *.zip
 
