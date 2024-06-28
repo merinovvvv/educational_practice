@@ -12,8 +12,8 @@
 #define CPP_LABS_LABS_H
 
 
-void CheckArgumentsAmount (int arguments_amount);
-void CheckInputPath (const std::filesystem::path& path_to_filesystem_object);
+void CheckArgumentsAmount (int arguments_amount, const size_t& labNumber);
+void CheckInputPath (const std::filesystem::path& path_to_filesystem_object, const size_t& labNumber);
 bool IsJsonCorrect(const nlohmann::json& json);
 nlohmann::json parseFile(const std::filesystem::path& path_to_filesystem_object);
 
@@ -35,7 +35,7 @@ namespace filesystem_object {
     struct Info {
         std::string name;
         std::string type;
-        std::size_t size;
+        std::size_t size{};
 
         explicit Info(const std::filesystem::path& path_to_filesystem_object);
     };
@@ -48,9 +48,9 @@ namespace filesystem_object {
 namespace directory_content {
     struct Info {
         std::filesystem::path path_to_directory;
-        std::size_t size;
-        uint32_t files_amount;
-        uint32_t directories_amount;
+        std::size_t size{};
+        uint32_t files_amount{};
+        uint32_t directories_amount{};
 
         explicit Info(const std::filesystem::path& path_to_filesystem_object);
 
@@ -84,9 +84,9 @@ public:
 std::size_t GetFileContentHash (const std::filesystem::path& path_to_file);
 void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directory);
 
-std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file);
-void Move(const std::filesystem::path& path_to_file);
-void MoveForFiles(const std::filesystem::path& path_to_directory);
+std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file, const size_t& labNumber);
+void Move(const std::filesystem::path& path_to_file, const size_t& labNumber);
+void MoveForFiles(const std::filesystem::path& path_to_directory, const size_t& labNumber);
 
 class FileName {
 public:
@@ -102,6 +102,8 @@ public:
     bool IsRemoveRequired() const;
 };
 
-void MoveAndDelete(const std::filesystem::path& path_to_directory);
+void MoveAndDelete(const std::filesystem::path& path_to_directory, const size_t& labNumber);
+
+void labChoose(int argc, char *argv[]);
 
 #endif //CPP_LABS_LABS_H

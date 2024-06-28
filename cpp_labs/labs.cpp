@@ -8,44 +8,32 @@
 #include "json.hpp"
 #include "labs.h"
 
-void CheckArgumentsAmount (int arguments_amount) { //for lab 1-5, 8
-    try {
-        if (arguments_amount != 2) {
-            std::ostringstream oss;
-            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
-            throw std::invalid_argument (oss.str());
+void CheckArgumentsAmount (int arguments_amount, const size_t& labNumber) {
+
+    if (labNumber >= 1 && labNumber <= 5 || labNumber >= 8 && labNumber <= 10) {
+        try {
+            if (arguments_amount != 2) {
+                std::ostringstream oss;
+                oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 2!";
+                throw std::invalid_argument (oss.str());
+            }
+        } catch (const std::exception& e) {
+            std::cerr << e.what();
+            //system("pause");
+            //exit(0);
         }
-    } catch (const std::exception& e) {
-        std::cerr << e.what();
-        //system("pause");
-        //exit(0);
+    } else if (labNumber == 6 || labNumber == 7) {
+        try {
+            if (arguments_amount != 3) {
+                std::ostringstream oss;
+                oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 3!";
+                throw std::invalid_argument(oss.str());
+            }
+        } catch (const std::exception &e) {
+            std::cerr << e.what();
+        }
     }
 }
-
-//void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for labs 1, 2
-//    try {
-//        std::filesystem::path filepath( path_to_filesystem_object.string() );
-//        if (!std::filesystem::exists(filepath)) {
-//            std::ostringstream oss;
-//            oss << "Filesystem object by path " << filepath << " is not exists!";
-//            throw std::invalid_argument (oss.str());
-//        } else if (!std::filesystem::is_regular_file(filepath)) {
-//            std::ostringstream oss;
-//            oss << "Filesystem object by path " << filepath << " is not a regular file!";
-//            throw std::invalid_argument (oss.str());
-//        } else {
-//            if (filepath.extension() != ".json") {
-//                std::ostringstream oss;
-//                oss << "Filesystem object by path " << filepath << " has invalid extension!";
-//                throw std::invalid_argument (oss.str());
-//            }
-//        }
-//    } catch (const std::exception& e) {
-//        std::cerr << e.what();
-//        //system("pause");
-//        //exit(0);
-//    }
-//}
 
 bool IsJsonCorrect(const nlohmann::json& json) {
     if (!json.is_object()) {
@@ -133,7 +121,7 @@ std::tm GetRequiredDateTime() {
 
     std::time_t yesterday = now - 86400;
 
-    std::tm localTime;
+    std::tm localTime{};
     localtime_s(&localTime, &yesterday);
     return localTime;
 }
@@ -167,39 +155,6 @@ void writeToFile(const std::filesystem::path& path_to_filesystem_object, nlohman
     }
 }
 
-//void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for lab03
-//    try {
-//        std::filesystem::path filepath( path_to_filesystem_object.string() );
-//        if (filepath.extension() != ".json") {
-//            std::ostringstream oss;
-//            oss << "Filesystem object by path " << filepath << " has invalid extension!";
-//            throw std::invalid_argument (oss.str());
-//        }
-//    } catch (const std::exception& e) {
-//        std::cerr << e.what();
-//        //system("pause");
-//        //exit(0);
-//    }
-//}
-
-//void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for lab 4
-//    try {
-//        std::filesystem::path filepath( path_to_filesystem_object.string() );
-//        if (!std::filesystem::exists(filepath)) {
-//            std::ostringstream oss;
-//            oss << "Filesystem object by path " << filepath << " is not exists!";
-//            throw std::invalid_argument (oss.str());
-//        } else if (!std::filesystem::is_regular_file(filepath) && !std::filesystem::is_directory(filepath)) {
-//            std::ostringstream oss;
-//            oss << "Filesystem object by path " << filepath << " has invalid type!";
-//            throw std::invalid_argument (oss.str());
-//        }
-//    } catch (const std::exception& e) {
-//        std::cerr << e.what();
-//        //system("pause");
-//        //exit(0);
-//    }
-//}
 
 std::size_t Size (const std::filesystem::path& path_to_filesystem_object) {
 
@@ -295,22 +250,71 @@ void writeJsonToFile (const std::filesystem::path& path_to_filesystem_object, nl
     }
 }
 
-void CheckInputPath (const std::filesystem::path& path_to_filesystem_object) { //for lab 5
-    try {
-        std::filesystem::path filepath( path_to_filesystem_object.string() );
-        if (!std::filesystem::exists(filepath)) {
-            std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath << " is not exists!";
-            throw std::runtime_error (oss.str());
-        } else if (!std::filesystem::is_directory(filepath)) {
-            std::ostringstream oss;
-            oss << "Filesystem object by path " << filepath << " is not a directory!";
-            throw std::runtime_error (oss.str());
+void CheckInputPath (const std::filesystem::path& path_to_filesystem_object, const size_t& labNumber) {
+    if (labNumber >= 5 && labNumber <= 10) {
+        try {
+            std::filesystem::path filepath( path_to_filesystem_object.string() );
+            if (!std::filesystem::exists(filepath)) {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " is not exists!";
+                throw std::runtime_error (oss.str());
+            } else if (!std::filesystem::is_directory(filepath)) {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " is not a directory!";
+                throw std::runtime_error (oss.str());
+            }
+        } catch (const std::exception& e) {
+            std::cerr << e.what();
+            //system("pause");
+            //exit(0);
         }
-    } catch (const std::exception& e) {
-        std::cerr << e.what();
-        //system("pause");
-        //exit(0);
+    } else if (labNumber == 4) {
+        try {
+            std::filesystem::path filepath(path_to_filesystem_object.string());
+            if (!std::filesystem::exists(filepath)) {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " is not exists!";
+                throw std::invalid_argument(oss.str());
+            } else if (!std::filesystem::is_regular_file(filepath) && !std::filesystem::is_directory(filepath)) {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " has invalid type!";
+                throw std::invalid_argument(oss.str());
+            }
+        } catch (const std::exception &e) {
+            std::cerr << e.what();
+        }
+    } else if (labNumber == 3) {
+        try {
+            std::filesystem::path filepath( path_to_filesystem_object.string() );
+            if (filepath.extension() != ".json") {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " has invalid extension!";
+                throw std::invalid_argument (oss.str());
+            }
+        } catch (const std::exception& e) {
+            std::cerr << e.what();
+        }
+    } else if (labNumber == 1 || labNumber == 2) {
+        try {
+            std::filesystem::path filepath( path_to_filesystem_object.string() );
+            if (!std::filesystem::exists(filepath)) {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " is not exists!";
+                throw std::invalid_argument (oss.str());
+            } else if (!std::filesystem::is_regular_file(filepath)) {
+                std::ostringstream oss;
+                oss << "Filesystem object by path " << filepath << " is not a regular file!";
+                throw std::invalid_argument (oss.str());
+            } else {
+                if (filepath.extension() != ".json") {
+                    std::ostringstream oss;
+                    oss << "Filesystem object by path " << filepath << " has invalid extension!";
+                    throw std::invalid_argument (oss.str());
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << e.what();
+        }
     }
 }
 
@@ -404,20 +408,6 @@ namespace directory_content {
     }
 }
 
-//void CheckArgumentsAmount (int arguments_amount) { //for lab06, lab07
-//    try {
-//        if (arguments_amount != 3) {
-//            std::ostringstream oss;
-//            oss << "Invalid command line arguments amount: current is " << arguments_amount << ", required is 3!";
-//            throw std::invalid_argument (oss.str());
-//        }
-//    } catch (const std::exception& e) {
-//        std::cerr << e.what();
-//        //system("pause");
-//        //exit(0);
-//    }
-//}
-
 void CheckDirectoryPath (const std::filesystem::path& path_to_directory) {
     try {
         std::filesystem::path filepath( path_to_directory.string() );
@@ -494,13 +484,11 @@ std::set<std::string> GetFilesContentFromDirectory (const std::filesystem::path&
     return contents;
 }
 
-void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2) {
+void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& path_to_directory_1, const std::filesystem::path& path_to_directory_2) { //TODO
 
-    for (const auto& dir : std::filesystem::directory_iterator(path_to_directory_1)) {
-
+    for (const auto &dir: std::filesystem::directory_iterator(path_to_directory_1)) {
         bool isEqual = false;
-
-        for (const auto& dir : std::filesystem::directory_iterator(path_to_directory_1)) {
+        if (std::filesystem::is_regular_file(dir)) {
             std::string fileContent = ReadFileContent(dir);
 
             for (auto it = filesSet.begin(); it != filesSet.end(); ++it) {
@@ -510,7 +498,8 @@ void setInsert (std::set <std::string>& filesSet, const std::filesystem::path& p
             }
             if (!isEqual) {
                 filesSet.insert(fileContent);
-                std::cout << "File by path " << dir << " has been copied to directory by path " << path_to_directory_2 << " !";
+                std::cout << "File by path " << dir << " has been copied to directory by path " << path_to_directory_2
+                          << " !";
                 std::filesystem::path targetFilePath = path_to_directory_2 / dir.path().filename();
                 std::filesystem::copy_file(dir, targetFilePath, std::filesystem::copy_options::overwrite_existing);
             }
@@ -577,43 +566,10 @@ void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directo
     }
 }
 
-//std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file) { //for lab09
-//    try {
-//        std::string filename = path_to_file.filename().string();
-//        std::string stem = path_to_file.stem().string();
-//        std::string extension = path_to_file.extension().string();
-//
-//        std::size_t first_underscore = filename.find('_');
-//        std::size_t second_underscore = filename.find('_', first_underscore + 1);
-//        std::size_t third_underscore = filename.find('_', second_underscore + 1);
-//
-//        if (first_underscore == std::string::npos || second_underscore == std::string::npos || third_underscore == std::string::npos) {
-//            throw std::invalid_argument("Invalid filename. File path: " + path_to_file.string() + "!");
-//        }
-//
-//        std::string year = stem.substr(0, first_underscore);
-//        std::string month = stem.substr(first_underscore + 1, second_underscore - first_underscore - 1);
-//        std::string day = stem.substr(second_underscore + 1, third_underscore - second_underscore - 1);
-//        std::string name = stem.substr(third_underscore + 1);
-//
-//        std::filesystem::path new_path = path_to_file.parent_path();
-//        new_path.append(year);
-//        new_path.append(month);
-//        new_path.append(day);
-//        new_path.append(name + extension);
-//
-//        return new_path;
-//
-//    } catch (std::exception& ex) {
-//        std::cerr << ex.what();
-//        exit(0);
-//    }
-//}
-
-void Move(const std::filesystem::path& path_to_file) {
+void Move(const std::filesystem::path& path_to_file, const size_t& labNumber) {
 
     try {
-        std::filesystem::path new_path = GetPathToMove(path_to_file);
+        std::filesystem::path new_path = GetPathToMove(path_to_file, labNumber);
         std::filesystem::create_directories(new_path.parent_path());
         std::filesystem::rename(path_to_file, new_path);
         std::cout << "File by path " << path_to_file << " has been moved to " << new_path << "!";
@@ -622,10 +578,10 @@ void Move(const std::filesystem::path& path_to_file) {
     }
 }
 
-void MoveForFiles(const std::filesystem::path& path_to_directory) {
+void MoveForFiles(const std::filesystem::path& path_to_directory, const size_t& labNumber) {
     for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
         if (std::filesystem::is_regular_file(dir)) {
-                Move(dir.path());
+                Move(dir.path(), labNumber);
         }
     }
 }
@@ -663,21 +619,58 @@ bool FileName::IsRemoveRequired() const {
     }
 }
 
-std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file) { //for lab10
+std::filesystem::path GetPathToMove (const std::filesystem::path& path_to_file, const size_t& labNumber) { //for labs 9, 10
 
-    FileName fname(path_to_file);
-    fname.Parse();
+    if (labNumber == 10) {
+        FileName fname(path_to_file);
+        fname.Parse();
 
-    std::filesystem::path new_path = path_to_file.parent_path();
-    new_path.append(std::to_string(fname.year));
-    new_path.append(std::to_string(fname.month));
-    new_path.append(std::to_string(fname.day));
-    new_path.append(fname.only_name + path_to_file.extension().string());
+        std::filesystem::path new_path = path_to_file.parent_path();
+        new_path.append(std::to_string(fname.year));
+        new_path.append(std::to_string(fname.month));
+        new_path.append(std::to_string(fname.day));
+        new_path.append(fname.only_name + path_to_file.extension().string());
 
-    return new_path;
+        return new_path;
+    } else if (labNumber == 9) {
+        try {
+            std::string filename = path_to_file.filename().string();
+            std::string stem = path_to_file.stem().string();
+            std::string extension = path_to_file.extension().string();
+
+            std::size_t first_underscore = filename.find('_');
+            std::size_t second_underscore = filename.find('_', first_underscore + 1);
+            std::size_t third_underscore = filename.find('_', second_underscore + 1);
+
+            if (first_underscore == std::string::npos || second_underscore == std::string::npos ||
+                third_underscore == std::string::npos) {
+                throw std::invalid_argument("Invalid filename. File path: " + path_to_file.string() + "!");
+            }
+
+            std::string year = stem.substr(0, first_underscore);
+            std::string month = stem.substr(first_underscore + 1, second_underscore - first_underscore - 1);
+            std::string day = stem.substr(second_underscore + 1, third_underscore - second_underscore - 1);
+            std::string name = stem.substr(third_underscore + 1);
+
+            std::filesystem::path new_path = path_to_file.parent_path();
+            new_path.append(year);
+            new_path.append(month);
+            new_path.append(day);
+            new_path.append(name + extension);
+
+            return new_path;
+
+        } catch (std::exception &ex) {
+            std::cerr << ex.what();
+            exit(0);
+        }
+    } else {
+        std::cout << "Invalid lab number.";
+        exit(0);
+    }
 }
 
-void MoveAndDelete(const std::filesystem::path& path_to_directory) {
+void MoveAndDelete(const std::filesystem::path& path_to_directory, const size_t& labNumber) {
     for (const auto& dir : std::filesystem::directory_iterator(path_to_directory)) {
         FileName fName(dir);
         fName.Parse();
@@ -685,7 +678,101 @@ void MoveAndDelete(const std::filesystem::path& path_to_directory) {
             std::filesystem::remove(fName.path_to_current_file);
         }
         if (std::filesystem::is_regular_file(dir)) {
-            Move(dir.path());
+            Move(dir.path(), labNumber);
         }
+    }
+}
+
+void labChoose(int argc, char *argv[]) {
+    size_t labNumber;
+    std::cout << "Input the lab number: (1 - 10)" << "\n";
+    std::cin >> labNumber;
+
+    switch (labNumber) {
+        case 1: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckInputPath(argv[1], labNumber);
+            nlohmann::json object = parseFile(argv[1]);
+
+            bool isJson = IsJsonCorrect(object);
+
+            if (isJson) {
+                std::cout << "Structure of JSON-file by path " << argv[1] << " is correct.";
+            } else {
+                std::cout << "Structure of JSON-file by path " << argv[1] << " is incorrect.";
+            }
+            break;
+        }
+        case 2: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckInputPath(argv[1], labNumber);
+            nlohmann::json object = parseFile(argv[1]);
+
+            ModifyJsonObject(object);
+            MakeFile(object);
+            break;
+        }
+        case 3: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckInputPath(argv[1], labNumber);
+            std::tm date_time = GetRequiredDateTime();
+            nlohmann::json date_time_json = TmToJson(date_time);
+            std::cout << "Time in JSON: " << date_time_json.dump(4) << std::endl;
+            writeToFile(argv[1], date_time_json);
+            break;
+        }
+        case 4: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckInputPath(argv[1], labNumber);
+            nlohmann::json jsonObject = GetFsObjectInfo(argv[1]);
+            std::cout << jsonObject.dump(4) << std::endl;
+            writeJsonToFile(argv[1], jsonObject);
+            break;
+        }
+        case 5: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckInputPath(argv[1], labNumber);
+            directory_content::Info dirInfo = directory_content::GetInfo(argv[1]);
+            std::cout << "\n" << dirInfo << "\n\n";
+            filesystem_object::Info filesInfo = filesystem_object::GetInfo(argv[1]);
+            std::cout << filesInfo;
+            break;
+        }
+        case 6: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckDirectoryPath(argv[1]);
+            CheckDirectoryPath(argv[2]);
+            std::set<std::string> filesSet = GetFilesContentFromDirectory(argv[2]);
+            setInsert(filesSet, argv[1], argv[2]);
+            break;
+        }
+        case 7: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckDirectoryPath(argv[1]);
+            CheckDirectoryPath(argv[2]);
+            FilesStorage filesStorage(argv[2]);
+            filesStorage.InitStorage();
+            filesStorage.CopyFilesFromDirectory(argv[1], argv[2]);
+            break;
+        }
+        case 8: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckDirectoryPath(argv[1]);
+            RemoveDuplicatesFromDirectory(argv[1]);
+        }
+        case 9: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckDirectoryPath(argv[1]);
+            MoveForFiles(argv[1], labNumber);
+        }
+        case 10: {
+            CheckArgumentsAmount(argc, labNumber);
+            CheckDirectoryPath(argv[1]);
+            MoveAndDelete(argv[1], labNumber);
+            break;
+        }
+        default:
+            std::cout << "Invalid lab number.";
+            break;
     }
 }
