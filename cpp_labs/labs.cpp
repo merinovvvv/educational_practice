@@ -560,8 +560,8 @@ void RemoveDuplicatesFromDirectory (const std::filesystem::path& path_to_directo
         size_t hash = GetFileContentHash(dir);
         auto [_, inserted] = hashes.insert(hash);
         if (!inserted) {
-            std::filesystem::remove(dir);
             std::cout << "File by path " << dir.path() << " has been removed";
+            std::filesystem::remove(dir);
         }
     }
 }
@@ -759,11 +759,13 @@ void labChoose(int argc, char *argv[]) {
             CheckArgumentsAmount(argc, labNumber);
             CheckDirectoryPath(argv[1]);
             RemoveDuplicatesFromDirectory(argv[1]);
+            break;
         }
         case 9: {
             CheckArgumentsAmount(argc, labNumber);
             CheckDirectoryPath(argv[1]);
             MoveForFiles(argv[1], labNumber);
+            break;
         }
         case 10: {
             CheckArgumentsAmount(argc, labNumber);
